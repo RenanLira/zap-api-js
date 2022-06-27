@@ -4,10 +4,7 @@ const path = require('path')
 const mime = require('mime-types');
 
 venom.create({
-    session: 'renan',
-    browserArgs: [
-      '--no-sandbox'
-    ]
+    session: 'renan'
 }).then(client => start(client))
 .catch(erro => console.log(erro))
 
