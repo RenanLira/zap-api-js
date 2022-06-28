@@ -3,6 +3,9 @@ const fs = require('fs');
 const path = require('path')
 const mime = require('mime-types');
 
+
+const lista = require('./lista')
+
 venom.create({
     session: 'renan'
 }).then(client => start(client))
@@ -14,32 +17,8 @@ const start = (client) => {
     client.onAnyMessage( async (message) => {
         console.log(message)
         if ( message.text == 'oi' ) {
-            const list = [
-                {
-                  title: "Pasta",
-                  rows: [
-                    {
-                      title: "Ravioli Lasagna",
-                      description: "Made with layers of frozen cheese",
-                    }
-                  ]
-                },
-                {
-                  title: "Dessert",
-                  rows: [
-                    {
-                      title: "Baked Ricotta Cake",
-                      description: "Sweets pecan baklava rolls",
-                    },
-                    {
-                      title: "Lemon Meringue Pie",
-                      description: "Pastry filled with lemonand meringue.",
-                    }
-                  ]
-                }
-              ];
             
-            await client.sendListMenu(message.from, 'Title', 'subTitle', 'Description', 'menu', list)
+            await client.sendListMenu(message.from, 'Title', 'subTitle', 'Description', 'menu', lista)
               .then((result) => {
                 console.log('Result: ', result); //return object success
               })
