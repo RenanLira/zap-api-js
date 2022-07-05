@@ -3,8 +3,6 @@ const fs = require('fs');
 const path = require('path')
 const mime = require('mime-types');
 
-
-const lista = require('./lista')
 const {setdata} = require('./getjson')
 
 venom.create({
