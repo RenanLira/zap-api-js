@@ -5,6 +5,7 @@ const mime = require('mime-types');
 
 
 const lista = require('./lista')
+const {setdata} = require('./getjson')
 
 venom.create({
     session: 'renan'
@@ -12,38 +13,74 @@ venom.create({
 .catch(erro => console.log(erro))
 
 
+const estoutrabalhando = (date) => {
+    let hr = date.getHours() + (date.getMinutes() / 60)
+    let dia = date.getDay()
+    let trabalho = true
 
-const start = (client) => {
-    client.onAnyMessage( async (message) => {
-        console.log(message)
-        if ( message.text == 'oi' ) {
-            
-            await client.sendListMenu(message.from, 'Title', 'subTitle', 'Description', 'menu', lista)
-              .then((result) => {
-                console.log('Result: ', result); //return object success
-              })
-              .catch((erro) => {
-                console.error('Error when sending: ', erro); //return object error
-              });
-        }
-
-        if ( message.isGroupMsg == false && message.type === 'image') {
-
-            console.log(message)
-
-            const buffer = await client.decryptFile(message);
-             // At this point you can do whatever you want with the buffer
-             // Most likely you want to write it into a file
-            const fileName = `${message.from}.${mime.extension(message.mimetype)}`;
-            await fs.writeFileSync('images/' + fileName, buffer)
-
-            await client.sendImageAsSticker(message.from, `${__dirname}/images/${fileName}`)
-            .then((result) => {
-                console.log('Result: ', result); //return object success
-            })
-            .catch((erro) => {
-                console.error('Error when sending: ', erro); //return object error
-            });
-        }
-    })
+    if (dia == 6) {
+        trabalho = hr > 12.5 && hr < 13.5 || hr > 17 ? false : true
+    }
+    else if (dia > 0) {
+        trabalho = hr > 12.5 && hr < 13.5 || hr > 18 ? false : true
+    } else {
+        trabalho = false
+    }
+   
+    return trabalho
 }
+
+const proxResp = (agora, data, id) => {
+    let cliente = data[id]
+    console.log(cliente)
+    let t = new Date(agora)
+    console.log(t)
+    // agora.setHours(agora.getHours()+3)
+
+    if (cliente){
+       return cliente.proxResp < t ? true: false
+
+    } else {
+        
+        return true
+    }
+
+}   
+
+
+const start = async (client) => {
+
+    client.onAnyMessage( async (message) => {
+        const timestamp = message.timestamp
+        const id = message.sender.id
+
+        
+        console.log(message)
+
+        if (message.isGroupMsg == false && message.sender.isMyContact == true && message.sender.isMe == false) {
+            console.log(message.chat.contact.name.search('TC'))
+
+            if (message.chat.contact.name.search('TC') != -1){
+                const data = JSON.parse(fs.readFileSync('./data.json'))
+                let agora = new Date(timestamp * 1000)
+                
+                if (estoutrabalhando(agora)) {
+                    console.log('estou trabalhando')
+
+                } else {
+                    if (proxResp(agora, data, id)) {
+                        client.sendText(message.from, 'Olá, estou fora de serviço')
+                        agora.setHours(agora.getHours()+3)
+                        setdata({...data, [id]: {'proxResp': agora.getTime()}})
+                    }
+                }
+
+            }
+
+        }
+
+
+    })  
+}
+
+
