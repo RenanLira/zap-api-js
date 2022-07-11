@@ -53,12 +53,12 @@ const start = async (client) => {
         const id = message.sender.id
 
         
-        console.log(message)
+        console.log(message.sender.displayName, message.text ? message.text : '' )
         if (message.chatId == 'status@broadcast') {
-            
+
         }
         else if (message.isGroupMsg == false && message.sender.isMyContact == true && message.sender.isMe == false) {
-            console.log(message.chat.contact.name.search('TC'))
+            
 
             if (message.chat.contact.name.search('TC') != -1){
                 const data = JSON.parse(fs.readFileSync('./data.json'))
