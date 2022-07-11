@@ -54,8 +54,10 @@ const start = async (client) => {
 
         
         console.log(message)
-
-        if (message.isGroupMsg == false && message.sender.isMyContact == true && message.sender.isMe == false) {
+        if (message.chatId == 'status@broadcast') {
+            
+        }
+        else if (message.isGroupMsg == false && message.sender.isMyContact == true && message.sender.isMe == false) {
             console.log(message.chat.contact.name.search('TC'))
 
             if (message.chat.contact.name.search('TC') != -1){
